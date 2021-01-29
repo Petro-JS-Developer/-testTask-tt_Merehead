@@ -1,21 +1,20 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { useSelector } from "react-redux";
-import { allPages , visibleUsers, numPage, setNumPage, fromUser, toUser } from '../../Store/store';
+import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  allUsers, visibleUsers, numPage, setNumPage, fromUser, toUser,
+} from '../../Store/store';
 import './styleForPagination.css';
 
 export const Pagination = () => {
-const allPage = useSelector(allPages);
-const countVisibleUsers = useSelector(visibleUsers);
-const numberPage = useSelector(numPage);
-const fromUsers = useSelector(fromUser);
-const toUsers = useSelector(toUser);
-
+  const allPage = useSelector(allUsers).length;
+  const countVisibleUsers = useSelector(visibleUsers);
+  const numberPage = useSelector(numPage);
+  const fromUsers = useSelector(fromUser);
+  const toUsers = useSelector(toUser);
 
   const paginationPages = Math.ceil(allPage / countVisibleUsers);
-  const paginationArr = getPaginationControls(numberPage, paginationPages);
 
   function getPaginationControls(active, last) {
     if (last > 5) {
@@ -57,6 +56,8 @@ const toUsers = useSelector(toUser);
     return arr;
   }
 
+  const paginationArr = getPaginationControls(numberPage, paginationPages);
+
   return (
     <>
       <div className="active-items">
@@ -79,7 +80,7 @@ const toUsers = useSelector(toUser);
             </button>
           </li>
 
-          {paginationArr.map(pagination => (
+          {paginationArr.map((pagination) => (
             pagination !== '...'
               ? (
                 <li
@@ -127,9 +128,3 @@ const toUsers = useSelector(toUser);
     </>
   );
 };
-
-// Pagination.propTypes = {
-//   visibleUsers: PropTypes.number.isRequired,
-//   page: PropTypes.number.isRequired,
-//   setNumPage: PropTypes.func.isRequired,
-// };

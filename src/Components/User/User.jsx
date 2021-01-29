@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
+/* eslint-disable jsx-a11y/no-autofocus */
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { deleteUserFromState, isEditCell, boolValCell, editUserAction } from '../../Store/store';
-import './style.css'
-import { deleteUser, editUser } from '../../API/api';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  deleteUserFromState, isEditCellActionCreator, boolValCell, editUserAction,
+} from '../../Store/store';
+import './styleUser.css';
+import { deleteUser, editUser } from '../../API/api';
 
-export const User = ({ name, email, phone, website, id }) => {
+export const User = ({
+  name,
+  email,
+  phone,
+  website,
+  id,
+}) => {
   const dispatch = useDispatch();
-  const isEdCell = useSelector(boolValCell);
+  const isEditCell = useSelector(boolValCell);
 
   const [editName, setEditName] = useState(false);
   const [customName, setCustomName] = useState(name);
@@ -22,72 +31,127 @@ export const User = ({ name, email, phone, website, id }) => {
   const [customWebsite, setCustomWebsite] = useState(website);
 
   const verificationEditCell = (setValue) => {
-    if (isEdCell) {
-      dispatch(isEditCell(false));
-      setValue(true);
+    setEditName(false);
+    setEditEmail(false);
+    setEditPhone(false);
+    setEditWebsite(false);
+
+    dispatch(isEditCellActionCreator(id));
+    setValue(true);
+  };
+
+  useEffect(() => {
+    if (isEditCell !== id) {
+      setEditName(false);
+      setEditEmail(false);
+      setEditPhone(false);
+      setEditWebsite(false);
     }
-  }
+  }, [isEditCell]);
 
   const handleEdit = (e, setValue) => {
     setValue(e.target.value);
-  }
+  };
 
-  const handleSave = async (e, id, setValue, value) => {
-    if (e.code === "Enter") {
+  const handleSave = (e, idUser, setValue, currentValue, baseValue) => {
+    if (e.code === 'Enter') {
       if (!customName || !editEmail || !editPhone || !editWebsite) {
-        setValue(value);
+        setValue(currentValue);
       }
 
-      editUser(id, {
-        method: 'PATCH',
-        body: JSON.stringify({
-        name: customName,
-        email: customEmail,
-        phone: customPhone,
-        website: customWebsite,
-        }),
-        headers: { 'Content-type': 'application/json; charset=utf-8' },
-      })
+      editUser(
+        idUser,
+        customName,
+        customEmail,
+        customPhone,
+        customWebsite,
+      );
 
       dispatch(editUserAction(
-        {
-          id: id,
-          name: customName,
-          email: customEmail,
-          phone: customPhone,
-          website: customWebsite,
-          }
-      ))
+        idUser,
+        customName,
+        customEmail,
+        customPhone,
+        customWebsite,
+      ));
 
-      setEditName(false);
-      dispatch(isEditCell(true));
+      dispatch(isEditCellActionCreator(true));
     }
 
-    if (e.code === "Escape") {
-      setValue(value);
-      setEditName(false);
+    if (e.code === 'Escape') {
+      setValue(baseValue);
+      dispatch(isEditCellActionCreator(true));
     }
-  }
+  };
 
   return (
-    <tr>
-      <td onDoubleClick={() => { verificationEditCell(setEditName) }}>{editName && !isEdCell ? <input value={customName} onChange={(e) => handleEdit(e, setCustomName)} onKeyDown={(e) => handleSave(e, id, setCustomName, customName)} /> : customName}</td>
-      <td onDoubleClick={() => { verificationEditCell(setEditEmail) }}>{editEmail && !isEdCell ? <input value={customEmail} onChange={(e) => handleEdit(e, setCustomEmail)} onKeyDown={(e) => handleSave(e, id, setCustomEmail, customEmail)} /> : customEmail}</td>
-      <td onDoubleClick={() => { verificationEditCell(setEditPhone) }}>{editPhone && !isEdCell ? <input value={customPhone} onChange={(e) => handleEdit(e, setCustomPhone)} onKeyDown={(e) => handleSave(e, id, setCustomPhone, customPhone)} /> : customPhone}</td>
-      <td onDoubleClick={() => { verificationEditCell(setEditWebsite) }}>{editWebsite && !isEdCell ? <input value={customWebsite} onChange={(e) => handleEdit(e, setCustomWebsite)} onKeyDown={(e) => handleSave(e, id, setCustomWebsite, customWebsite)} /> : customWebsite}</td>
-      <td> <button onClick={async () => {
-        await deleteUser(id);
-        deleteUserFromState(id);
-      }}>Delete</button></td>
-    </tr>
-  )
+    <>
+      <div className="bodyItem bodyNameItem" onDoubleClick={() => { verificationEditCell(setEditName); }}>
+        {editName
+          ? (
+            <input
+              autoFocus
+              value={customName}
+              onChange={(e) => handleEdit(e, setCustomName)}
+              onKeyDown={(e) => handleSave(e, id, setCustomName, customName, name)}
+            />
+          ) : customName}
+      </div>
+      <div className="bodyItem bodyEmailItem" onDoubleClick={() => { verificationEditCell(setEditEmail); }}>
+        {editEmail
+          ? (
+            <input
+              autoFocus
+              value={customEmail}
+              onChange={(e) => handleEdit(e, setCustomEmail)}
+              onKeyDown={(e) => handleSave(e, id, setCustomEmail, customEmail, email)}
+            />
+          ) : customEmail}
+      </div>
+      <div className="bodyItem bodyPhoneItem" onDoubleClick={() => { verificationEditCell(setEditPhone); }}>
+        {editPhone
+          ? (
+
+            <input
+              autoFocus
+              value={customPhone}
+              onChange={(e) => handleEdit(e, setCustomPhone)}
+              onKeyDown={(e) => handleSave(e, id, setCustomPhone, customPhone, phone)}
+            />
+          ) : customPhone}
+      </div>
+      <div className="bodyItem bodyWebsiteItem" onDoubleClick={() => { verificationEditCell(setEditWebsite); }}>
+        {editWebsite
+          ? (
+            <input
+              autoFocus
+              value={customWebsite}
+              onChange={(e) => handleEdit(e, setCustomWebsite)}
+              onKeyDown={(e) => handleSave(e, id, setCustomWebsite, customWebsite, website)}
+            />
+          ) : customWebsite}
+      </div>
+      <div className="bodyItem bodyButtonItem">
+        {' '}
+        <button
+          className="deleteButton"
+          type="submit"
+          onClick={async () => {
+            await deleteUser(id);
+            deleteUserFromState(id);
+          }}
+        >
+          Delete
+        </button>
+      </div>
+    </>
+  );
 };
 
 User.propTypes = {
-  id: PropTypes.any,
-  name: PropTypes.any,
-  email: PropTypes.any,
-  phone: PropTypes.any,
-  website: PropTypes.any,
-}
-
+  id: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  phone: PropTypes.string.isRequired,
+  website: PropTypes.string.isRequired,
+};

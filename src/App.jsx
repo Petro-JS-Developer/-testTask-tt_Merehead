@@ -7,9 +7,9 @@ import { Form } from './Components/FormForAddNewUser/Form';
 function App() {
   return (
     <div className="App">
-      <div className="container2">
-      <Table />
-      <Form />
+      <div className="wrapper">
+        <Table />
+        <Form />
       </div>
       <Pagination />
     </div>

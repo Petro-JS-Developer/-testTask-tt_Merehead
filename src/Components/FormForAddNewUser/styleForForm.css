@@ -2,7 +2,7 @@
   background: #f5f5f5;
   align-self: flex-start;
   color: #808080;
-  border-top: #e25644 solid 54px;
+  border-top: #007bff solid 54px;
   border-radius: 10px;
   box-sizing: border-box;
   padding: 24px;
@@ -47,7 +47,7 @@
   border-radius: 10px;
   box-sizing: border-box;
   padding: 8px 0;
-  background: #e25644;
+  background: #007bff;
   color: #fff;
   font-family: Roboto, sans-serif;
   font-size: 14px;
@@ -57,7 +57,7 @@
 }
 
 .formButton:hover {
-  border: 2px solid #e25644;
+  border: 2px solid #007bff;
   background: #fff;
-  color: #e25644;
+  color: #007bff;
 }
